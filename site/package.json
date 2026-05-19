@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "name": "site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "back": "node server.js",
+    "front": "npx serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
