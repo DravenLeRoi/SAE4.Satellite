@@ -57,7 +57,7 @@ class Recorder():
         optimal_block_size = sdr.getStreamMTU(rxStream)
         sdr.activateStream(rxStream) #start streaming
        
-        with wave.open(fileName, 'wb') as wav_file:
+        with wave.open(fileName, 'wb') as wav_file:-
             wav_file.setnchannels(2)
             wav_file.setsampwidth(2)  # 16 bits = 2 octets
             wav_file.setframerate( int(sample_frequency) )
