@@ -1,9 +1,0 @@
-[[satellites]]
-name = "TEST"
-frequency = 0
-min_elevation = -3
-min_culmination = -2
-bandwidth = -1
-demodulation = "ssb"
-record_format = "cu8"
-doppler_track = "on"

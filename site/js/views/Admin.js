@@ -125,6 +125,7 @@ export default {
     function deconnecter() {
       sessionStorage.removeItem('token');
       connecte.value = false;
+      password.value = ''; // ✅ vide le champ
     }
 
     async function charger() {

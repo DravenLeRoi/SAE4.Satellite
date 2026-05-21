@@ -6,12 +6,17 @@ const path = require('path'); // à ajouter en haut du fichier
 const TOML = require('@iarna/toml');
 const app = express();
 
+function log(emoji, message) {
+  console.log(`${emoji} [${new Date().toLocaleString('fr-FR')}] ${message}`);
+}
+
 // --- Config loader
 require('dotenv').config();
 
 const PORT           = process.env.PORT;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const TOKEN_SECRET   = process.env.TOKEN_SECRET;
+const TOML_PATH      = process.env.TOML_PATH;
 
 // Activation du CORS pour autoriser ton site à se connecter
 app.use(cors());
@@ -28,8 +33,10 @@ app.post('/api/login', (req, res) => {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
     res.json({ token: TOKEN_SECRET });
+    log('✅', `Connexion admin réussie depuis ${req.ip}`);
   } else {
     res.status(401).json({ erreur: 'Mot de passe incorrect' });
+    log('❌', `Tentative échouée depuis ${req.ip}`);
   }
 });
 
@@ -42,12 +49,6 @@ function requireAuth(req, res, next) {
   }
 }
 
-// Utilise le middleware sur les routes admin
-app.get('/api/admin/quelquechose', requireAuth, (req, res) => {
-  res.json({ data: '...' });
-});
-
-
 // Lire les satellites (admin)
 app.get('/api/admin/satellites', requireAuth, (req, res) => {
   res.json(getSatellites());
@@ -57,12 +58,16 @@ app.get('/api/admin/satellites', requireAuth, (req, res) => {
 app.post('/api/admin/satellites', requireAuth, (req, res) => {
   const satellites = req.body;
   const toml = TOML.stringify({ satellites });
-  fs.writeFileSync('./datas/satellites.toml', toml, 'utf-8');
+  fs.writeFileSync(TOML_PATH, toml, 'utf-8');
+  log('💾', `TOML sauvegardé — ${req.body.length} satellites depuis ${req.ip}`);
   res.json({ ok: true });
 });
 
 // --- API requests
 
+app.get('/api/version', (req, res) => {
+  res.json({ version: process.env.VERSION });
+});
 
 // Route pour tester que le serveur répond
 app.get('/api/stats', (req, res) => {
@@ -70,6 +75,7 @@ app.get('/api/stats', (req, res) => {
   const taille = tailleDossier('./datas');
 
   const satellites = getSatellites();
+  log('📊', `Stats demandées depuis ${req.ip}`);
 
   res.json({
     total: getImages().length,
@@ -142,7 +148,7 @@ app.listen(PORT, () => {
 
 function getSatellites()
 {
-  const fichier = fs.readFileSync('./datas/satellites.toml', 'utf-8');
+  const fichier = fs.readFileSync(TOML_PATH, 'utf-8');
   const config  = TOML.parse(fichier);
 
   return config.satellites;
