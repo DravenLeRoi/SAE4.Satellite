@@ -1,5 +1,7 @@
 import { ref, onMounted } from 'vue';
-import { API } from '../app.js';
+import { API } from '../config.js';
+
+
 
 export default {
   template: `
@@ -24,7 +26,7 @@ export default {
           <circle cx="140" cy="140" r="30" fill="#0e1520" stroke="#1e2d42" stroke-width="1.5"/>
           <circle cx="140" cy="140" r="30" fill="none" stroke="#3b82f6" stroke-width="0.5" opacity="0.4"/>
           <text x="140" y="146" text-anchor="middle" font-size="20">🌍</text>
-          <g style="animation:orbitAnim 6s linear infinite;transform-origin:140px 140px">
+          <g style="animation:spin 6s linear infinite;transform-origin:140px 140px;">
             <rect x="248" y="96" width="12" height="8" rx="1" fill="#0ea5e9" stroke="#3b82f6" stroke-width="0.5"/>
             <line x1="248" y1="100" x2="240" y2="100" stroke="#1e2d42" stroke-width="1"/>
             <line x1="260" y1="100" x2="268" y2="100" stroke="#1e2d42" stroke-width="1"/>
@@ -33,7 +35,6 @@ export default {
           </g>
           <line x1="140" y1="140" x2="248" y2="100" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
           <text x="140" y="250" text-anchor="middle" font-family="'Space Mono',monospace" font-size="9" fill="#4a6280">RÉCEPTION 137 MHz</text>
-          <style>@keyframes orbitAnim{to{transform:rotate(360deg)}}</style>
         </svg>
       </div>
     </div>
@@ -49,11 +50,11 @@ export default {
       </div>
       <div class="stat-card" style="--accent:var(--warning)">
         <div class="stat-label">Dernière réception</div>
-        <div class="stat-value" style="font-size:.85rem;color:var(--warning)">{{ stats.derniere }}</div>
+        <div class="stat-value" style="color:var(--warning)">{{ stats.derniere }}</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="--accent:var(--purple)">
         <div class="stat-label">Stockage utilisé</div>
-        <div class="stat-value blue">{{ stats.stockage }}</div>
+        <div class="stat-value" style="color:var(--purple)">{{ stats.stockage }}</div>
       </div>
     </div>
 
@@ -67,12 +68,12 @@ export default {
       <div class="feature-card">
         <div class="feature-icon">🖼</div>
         <div class="feature-title">Images APT / LRPT</div>
-        <div class="feature-desc">Affichage des images météo reçues avec métadonnées de réception : heure, qualité du signal, résolution.</div>
+        <div class="feature-desc">Affichage des images météo reçues avec métadonnées de réception.</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💾</div>
-        <div class="feature-title">Stockage SQLite</div>
-        <div class="feature-desc">Toutes les images et métadonnées sont indexées dans une base SQLite locale, consultables et filtrables.</div>
+        <div class="feature-title">Stockage interne</div>
+        <div class="feature-desc">Toutes les images et métadonnées sont récupérés et stockés sur le site.</div>
       </div>
     </div>
   </div>`,

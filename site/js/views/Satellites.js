@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue';
-import { API } from '../app.js';
+import { API } from '../config.js';
 
 export default {
   template: `

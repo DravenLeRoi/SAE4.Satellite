@@ -1,7 +1,8 @@
 import { createApp, defineComponent } from 'vue';
 import router from './router.js';
 
-export const API = 'http://localhost:3000';
+import { API } from './config.js';
+export { API };
 
 // Composant racine qui reprend le template défini dans index.html
 const RootApp = defineComponent({
@@ -14,6 +15,8 @@ const RootApp = defineComponent({
         <router-link to="/"           class="nav-link">Accueil</router-link>
         <router-link to="/satellites" class="nav-link">Satellites</router-link>
         <router-link to="/fichiers"   class="nav-link">Fichiers</router-link>
+        <router-link to="/credits" class="nav-link">Crédits</router-link>
+        <router-link to="/admin" class="nav-link">Admin</router-link>
       </div>
       <div class="nav-status">
         <div class="dot dot-ok"></div>Système actif
@@ -26,7 +29,7 @@ const RootApp = defineComponent({
       </transition>
     </router-view>
 
-    <footer>SATVIEW · Vue 3 + Vue Router · SQLite Backend</footer>
+  <footer>SatView • v0.1</footer>
   `
 });
 

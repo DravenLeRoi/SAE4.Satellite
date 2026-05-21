@@ -1,5 +1,5 @@
 import { ref, computed, onMounted } from 'vue';
-import { API } from '../app.js';
+import { API } from '../config.js';
 
 export default {
   template: `
@@ -27,23 +27,21 @@ export default {
           <div class="file-name">{{ f.nom }}</div>
           <div class="file-meta-row">
             <span>{{ f.satellite }}</span>
-            <span :class="['badge',f.ok?'badge-ok':'badge-error']" style="font-size:.55rem;padding:1px 5px">{{ f.ok?'✓':'✗' }}</span>
           </div>
-          <div class="file-meta-row" style="margin-top:3px"><span>{{ f.date }}</span><span>{{ f.taille }}</span></div>
+          <div class="file-meta-row" style="margin-top:3px"><span>{{ new Date(f.date).toLocaleString('fr-FR') }}</span><span>{{ f.taille }}</span></div>
         </div>
       </div>
     </div>
 
     <div v-if="view==='list' && filtered.length" class="card" style="padding:0;overflow:hidden">
       <table class="file-table">
-        <thead><tr><th>Fichier</th><th>Satellite</th><th>Date</th><th>Taille</th><th>Statut</th><th></th></tr></thead>
+        <thead><tr><th>Fichier</th><th>Satellite</th><th>Date</th><th>Taille</th><th></th></tr></thead>
         <tbody>
           <tr v-for="f in filtered" :key="f.id">
             <td style="color:var(--accent2)">{{ f.nom }}</td>
             <td>{{ f.satellite }}</td>
-            <td>{{ f.date }}</td>
+            <td>{{ new Date(f.date).toLocaleString('fr-FR') }}</td>
             <td>{{ f.taille }}</td>
-            <td><span :class="['badge',f.ok?'badge-ok':'badge-error']">{{ f.ok?'Valide':'Erreur' }}</span></td>
             <td><button class="btn btn-sm btn-ghost" @click="viewer=f">Ouvrir</button></td>
           </tr>
         </tbody>
@@ -69,9 +67,8 @@ export default {
       </div>
       <div class="viewer-footer">
         <span>📡 {{ viewer.satellite }}</span>
-        <span>📅 {{ viewer.date }}</span>
+        <span>📅 {{ new Date(viewer.date).toLocaleString('fr-FR') }}</span>
         <span>💾 {{ viewer.taille }}</span>
-        <span :class="['badge',viewer.ok?'badge-ok':'badge-error']">{{ viewer.ok?'✓ Valide':'✗ Corrompu' }}</span>
       </div>
     </div>
   </div>`,
@@ -90,16 +87,12 @@ export default {
     async function fetchFiles() {
       try { 
         const r = await fetch(`${API}/api/fichiers`); 
-        if (r.ok) { files.value = await r.json(); return; } 
+        if (r.ok) { 
+          const data = await r.json();
+          files.value = data.sort((a, b) => new Date(b.date) - new Date(a.date)); // ✅ plus récent en premier
+          return; 
+        } 
       } catch {}
-      files.value = [
-        { id:1, nom:'noaa18_20260519_1432.png', satellite:'NOAA-18',        date:'19/05/2026 14:32', taille:'842 Ko', ok:true,  url:'https://upload.wikimedia.org/wikipedia/commons/2/2d/Meteosat-12-fci-march-equinox-2025-noon.jpg' },
-        { id:2, nom:'noaa19_20260519_1218.png', satellite:'NOAA-19',        date:'19/05/2026 12:18', taille:'910 Ko', ok:true,  url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/400px-The_Earth_seen_from_Apollo_17.jpg' },
-        { id:3, nom:'noaa18_20260518_1547.png', satellite:'NOAA-18',        date:'18/05/2026 15:47', taille:'788 Ko', ok:true,  url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/400px-The_Earth_seen_from_Apollo_17.jpg' },
-        { id:4, nom:'noaa19_20260518_1102.png', satellite:'NOAA-19',        date:'18/05/2026 11:02', taille:'654 Ko', ok:false, url:null },
-        { id:5, nom:'noaa18_20260517_1623.png', satellite:'NOAA-18',        date:'17/05/2026 16:23', taille:'901 Ko', ok:true,  url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/400px-The_Earth_seen_from_Apollo_17.jpg' },
-        { id:6, nom:'meteor_20260516_0944.png', satellite:'Meteor-M N°2-3', date:'16/05/2026 09:44', taille:'2.1 Mo', ok:true,  url:null },
-      ];
     }
 
     onMounted(fetchFiles);
